@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WalkingDead | Tooshar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --text: #e8e8e8;
+      --muted: #555;
+      --accent: #c8f060;
+      --accent2: #60d0f0;
+      --mono: 'DM Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── 1. BOTTOM LAYER: BACKGROUNDS ── */
+    #dot-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 150px;
+      pointer-events: none;
+      z-index: -2;
+      opacity: 0.5;
+    }
+
+    #nav-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 75px;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    /* ── 2. MIDDLE LAYER: CURSOR / TOUCH RIPPLE ── */
+    #cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999; 
+      transform: translate(-50%, -50%);
+      transition: width 0.15s, height 0.15s, background 0.15s, opacity 0.3s ease;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(200,240,96,0.4);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998; 
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s ease;
+    }
+    #cursor-dot.h { width: 12px; height: 12px; background: var(--accent2); }
+    #cursor-ring.h { width: 48px; height: 48px; border-color: rgba(96,208,240,0.6); }
+
+    /* Touch pulse animation for mobile tapping */
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(0.8); }
+      50% { transform: translate(-50%, -50%) scale(1.3); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+    .pulse-tap { animation: pulse 0.3s ease-out; }
+
+    /* ── 3. TOP LAYER: ALL TEXT & CONTENT ── */
+    .nav-logo, .nav-links a,
+    .hero h1, .hero-sub, .hero-tag, .hero-corner, .scroll-hint,
+    .section-label,
+    .about-name, .about-text, .stat-label, .stat-value, .tag,
+    .role-card, .role-label, .role-text,
+    .project-num, .project-name, .project-desc, .chip, .project-arrow,
+    .event-card, .event-date, .event-title, .event-desc,
+    .contact-top, .link-platform, .contact-link span,
+    footer span {
+      position: relative;
+      z-index: 100;
+    }
+
+    /* ── STRUCTURE & LAYOUT ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.4rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-logo {
+      font-family: var(--sans); font-weight: 800; font-size: 1rem;
+      color: var(--accent); letter-spacing: -0.02em; text-decoration: none; cursor: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.75rem;
+      letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; cursor: none;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 100px 3rem 4rem;
+      border-bottom: 1px solid var(--border); position: relative; z-index: 2;
+    }
+    .hero-tag { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .hero-tag span { color: var(--accent); }
+    .hero h1 { font-family: var(--sans); font-size: clamp(3.5rem, 10vw, 9rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 2rem; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { max-width: 650px; font-size: 0.85rem; color: var(--muted); line-height: 1.8; border-left: 2px solid var(--border); padding-left: 1.2rem; }
+    .hero-corner { position: absolute; top: 50%; right: 3rem; transform: translateY(-50%); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; writing-mode: vertical-rl; line-height: 2; }
+    .scroll-hint { position: absolute; bottom: 2rem; right: 3rem; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; gap: 0.6rem; }
+    .scroll-hint::before { content: ''; display: block; width: 30px; height: 1px; background: var(--muted); }
+
+    section { padding: 6rem 3rem; border-bottom: 1px solid var(--border); max-width: 1100px; margin: 0 auto; position: relative; z-index: 2; }
+    .section-label { font-size: 0.65rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── PROFILE AVATAR ── */
+    .profile-avatar {
+      width: 120px; 
+      height: 120px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      margin-top: auto;
+      margin-bottom: 1.5rem;
+      display: block;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+      cursor: none;
+      position: relative;
+      z-index: 100;
+    }
+    
+    .profile-avatar:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .about-name { font-family: var(--sans); font-size: 2.2rem; font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.03em; }
+    .about-text { font-size: 0.82rem; color: #888; line-height: 1.9; margin-bottom: 1rem; }
+    .about-stats { display: flex; flex-direction: column; gap: 1.2rem; }
+    .stat { border: 1px solid var(--border); padding: 1.2rem 1.5rem; background: var(--surface); transition: border-color 0.2s; position: relative; }
+    .stat:hover { border-color: var(--accent); }
+    .stat-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .stat-value { font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--text); }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+    .tag { font-size: 0.65rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.2s; }
+    .tag:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* ── ROLES SIDE-BY-SIDE CARDS ── */
+    .roles-container {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+      width: 100%;
+    }
+    .role-card {
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.5rem;
+      background: var(--surface);
+      flex: 1;
+      transition: border-color 0.2s;
+    }
+    .role-card:hover { border-color: var(--accent); }
+    .role-label {
+      display: block;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .role-text {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .neon-link {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+      font-weight: 600;
+    }
+    .neon-link:hover { color: var(--accent); }
+
+    /* ── PROJECTS ── */
+    .projects-list { display: flex; flex-direction: column; }
+    .project-item {
+      border: 1px solid var(--border); border-bottom: none; padding: 1.8rem 2rem;
+      display: grid; grid-template-columns: 2fr 1fr auto; align-items: center; gap: 2rem;
+      background: var(--surface); transition: background 0.2s, border-color 0.2s;
+      text-decoration: none; color: inherit; cursor: none;
+      position: relative; 
+    }
+    .project-item:last-child { border-bottom: 1px solid var(--border); }
+    .project-item:hover { background: #161616; border-color: var(--accent); }
+    .project-item:hover + .project-item { border-top-color: var(--accent); }
+    .project-num { font-size: 0.6rem; color: var(--muted); margin-bottom: 0.3rem; }
+    .project-name { font-family: var(--sans); font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .project-desc { font-size: 0.72rem; color: var(--muted); }
+    .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: flex-end; }
+    .chip { font-size: 0.6rem; padding: 0.2rem 0.55rem; background: var(--bg); border: 1px solid var(--border); color: #555; letter-spacing: 0.05em; }
+    .project-arrow { color: var(--muted); font-size: 1rem; transition: transform 0.2s, color 0.2s; }
+    .project-item:hover .project-arrow { transform: translate(3px,-3px); color: var(--accent); }
+
+    /* ── EVENTS SECTION ── */
+    .events-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .event-card {
+      border: 1px solid var(--border);
+      padding: 1.8rem 2rem;
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+      cursor: none;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .event-card:hover { border-color: var(--accent); background: #161616; }
+    .event-date {
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .event-title {
+      font-family: var(--sans);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .event-desc {
+      font-size: 0.78rem;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1; /* Pushes the arrow to the bottom */
+    }
+    .event-card:hover .project-arrow { transform: translate(3px,-3px); color: var(--accent); }
+
+    /* ── CONTACT ── */
+    .contact-top { font-family: var(--sans); font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 3rem; }
+    .contact-top span { color: var(--accent); }
+    .contact-links { display: flex; flex-direction: column; }
+    .contact-link {
+      display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0;
+      border-top: 1px solid var(--border); text-decoration: none; color: var(--muted);
+      font-size: 0.8rem; letter-spacing: 0.05em; transition: color 0.2s; cursor: none;
+      position: relative;
+    }
+    .contact-link:last-child { border-bottom: 1px solid var(--border); }
+    .contact-link:hover { color: var(--text); }
+    .contact-link:hover .link-arrow { color: var(--accent); }
+    .link-platform { font-family: var(--sans); font-size: 1.1rem; font-weight: 600; color: var(--text); }
+    .link-arrow { transition: color 0.2s; }
+
+    footer { padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: #333; letter-spacing: 0.1em; position: relative; z-index: 2; }
+
+    .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      #nav-bg { height: 60px; }
+      .hero { padding: 80px 1.5rem 3rem; }
+      .hero-corner { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .roles-container { flex-direction: column; gap: 1rem; margin-top: 2rem; }
+      .events-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .project-item { grid-template-columns: 1fr auto; }
+      .project-stack { display: none; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+      body { cursor: auto; }
+      
+      /* Reset interactive styles for native touch feel */
+      .project-item, .contact-link, .nav-links a, .event-card { cursor: pointer; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="dot-grid"></canvas>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<div id="nav-bg"></div>
+<nav>
+  <a href="#" class="nav-logo">WalkingDead</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-corner">
+    ML · AI · Data Science · FOSS<br>
+    GGSIPU · IIT Guwahati
+  </div>
+  
+  <img src="https://github.com/walkingdead1407.png" alt="Tooshar Avatar" class="profile-avatar fade-in">
+  
+  <p class="hero-tag fade-in">Based in Noida, India &nbsp;/&nbsp; <span>Open to collabs</span></p>
+  <h1 class="fade-in">
+                Walking<br><em>Dead</em></h1>
+  <p class="hero-sub fade-in">
+    Turning data into meaning, and imagination into intelligent systems. A relentless learner — undergrad aspiring to be a Data Scientist &amp; ML Engineer.
+  </p>
+  <div class="scroll-hint">Scroll</div>
+</div>
+
+<section id="about">
+  <div class="section-label">01 &mdash; About</div>
+  <div class="about-grid">
+    <div>
+      <div class="about-name">Tooshar<br>aka WalkingDead</div>
+      <p class="about-text">
+        I'm someone who loves turning data into meaningful insights and imagination into intelligent systems. Currently pursuing <strong style="color:var(--text); position:relative; z-index:100;">B.Tech in CSE from GGSIPU</strong> and <strong style="color:var(--text); position:relative; z-index:100;">B.Sc (Hons.) in DSAI from IIT Guwahati</strong>.
+      </p>
+      <p class="about-text">
+        I've grown increasingly fascinated by the way Machine Learning and AI shape the world around us. I enjoy exploring how data-driven systems transform industries and enhance decision-making.
+      </p>
+      <p class="about-text">
+        I thrive in environments that encourage experimentation, innovation, and collaborative problem-solving. Motivated by curiosity, creativity, and real-world impact.
+      </p>
+      <div class="tags">
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Deep Learning</span>
+        <span class="tag">Data Analytics</span>
+        <span class="tag">Predictive Modelling</span>
+        <span class="tag">AI Systems</span>
+        <span class="tag">Automation</span>
+        <span class="tag">FOSS</span>
+      </div>
+
+      <div class="roles-container">
+        <div class="role-card">
+          <span class="role-label">Google Developer Groups Role</span>
+          <p class="role-text"><a href="https://drive.google.com/file/d/1qh1ha5NBd_tVzfujWBhZI4l3cDdSIXd-/view?usp=sharing" target="_blank" rel="noopener" class="neon-link">GDG Tech Associate</a> <span style="font-weight: 400;"></span></p>
+        </div>
+        
+        <div class="role-card">
+          <span class="role-label">Club Membership</span>
+          <p class="role-text">Member @ The FOSS Club</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-stats">
+      <div class="stat"><div class="stat-label">Primary Degree</div><div class="stat-value">B.Tech CSE — GGSIPU</div></div>
+      <div class="stat"><div class="stat-label">Secondary Degree</div><div class="stat-value">B.Sc DSAI — IIT Guwahati</div></div>
+      <div class="stat"><div class="stat-label">Focus Areas</div><div class="stat-value">ML · AI · Data Science · FOSS</div></div>
+      <div class="stat"><div class="stat-label">Currently Into</div><div class="stat-value">Unsupervised Learning &amp; New Languages</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-label">02 &mdash; Projects</div>
+  <div class="projects-list">
+    <a class="project-item" href="https://github.com/WalkingDead1407/Livabl" target="_blank" rel="noopener">
+      <div>
+        <div class="project-num">001</div>
+        <div class="project-name">Livabl</div>
+        <div class="project-desc">A Data-Driven Quality of Life Index for Smarter Home Decisions.</div>
+      </div>
+      <div class="project-stack">
+        <span class="chip">React + TypeScript</span>
+        <span class="chip">Python + FastAPI</span>
+        <span class="chip">OpenStreetMap</span>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+    <a class="project-item" href="https://github.com/WalkingDead1407/Password-Manager" target="_blank" rel="noopener">
+      <div>
+        <div class="project-num">002</div>
+        <div class="project-name">Password Manager</div>
+        <div class="project-desc">A password manager with ML integration (work in progress TwT).</div>
+      </div>
+      <div class="project-stack">
+        <span class="chip">Python</span>
+        <span class="chip">MySQL</span>
+        <span class="chip">Pyotp</span>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+    <a class="project-item" href="https://github.com/WalkingDead1407/Sudoku" target="_blank" rel="noopener">
+      <div>
+        <div class="project-num">003</div>
+        <div class="project-name">Sudoku</div>
+        <div class="project-desc">Well... it's a Sudoku. Built it, loved it.</div>
+      </div>
+      <div class="project-stack">
+        <span class="chip">Python</span>
+        <span class="chip">Tkinter</span>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+    <a class="project-item" href="https://github.com/WalkingDead1407/Ridepool" target="_blank" rel="noopener">
+      <div>
+        <div class="project-num">004</div>
+        <div class="project-name">Ridepool</div>
+        <div class="project-desc">A ride-pooling mobile app for sharing rides and splitting transport costs.</div>
+      </div>
+      <div class="project-stack">
+        <span class="chip">Flutter</span>
+        <span class="chip">Firebase</span>
+        <span class="chip">C</span>
+      </div>
+      <div class="project-arrow">↗</div>
+    </a>
+  </div>
+</section>
+
+<section id="events">
+  <div class="section-label">03 &mdash; Events</div>
+  <div class="events-grid">
+    
+    <a class="event-card" href="https://www.linkedin.com/posts/tooshar-bhardwaj-walkingdead_foss-opensource-opencommunitycall-activity-7435761174731771904-zxD1?utm_source=share&utm_medium=member_desktop&rcm=ACoAAF5aIVwBYM9FGe4HCMHT96PNyatUa0jsgrM" target="_blank" rel="noopener">
+      <div class="event-date">18th January 2026</div>
+      <div class="event-title">Open Community Call</div>
+      <div class="event-desc">Hosted an Open Community Call on Machine Learning, simplifying core concepts and creating an engaging space for beginners.
+
+Led a session under The FOSS Club covering ML basics, supervised learning, and linear regression, along with discussions on Linux, AI, and game development.</div>
+      <div class="project-arrow">↗</div>
+    </a>
+
+    <a class="event-card" href="https://www.linkedin.com/posts/tooshar-bhardwaj-walkingdead_fosshack2026-fossunited-opensource-activity-7444441535829606400-pRuK?utm_source=share&utm_medium=member_desktop&rcm=ACoAAF5aIVwBYM9FGe4HCMHT96PNyatUa0jsgrM" target="_blank" rel="noopener">
+      <div class="event-date">28-29th March 2026</div>
+      <div class="event-title">FOSS Hack 2026</div>
+      <div class="event-desc">Built LivaBl-—an open-source platform to simplify locality decisions using data-driven insights.
+
+We aggregated urban datasets to create a 0–100 Quality of Life score for every ward.
+
+</div>
+      <div class="project-arrow">↗</div>
+    </a>
+    
+    <a class="event-card" href="https://www.linkedin.com/posts/gdgdtc_gdg-codingcontest-battleofbrains-activity-7445545356991488001-u5C2?utm_source=share&utm_medium=member_desktop&rcm=ACoAAF5aIVwBYM9FGe4HCMHT96PNyatUa0jsgrM" target="_blank" rel="noopener">
+      <div class="event-date">25th January 2026</div>
+      <div class="event-title">GDG BoB</div>
+      <div class="event-desc">Volunteer</div>
+      <div class="project-arrow">↗</div>
+    </a>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-label">04 &mdash; Contact</div>
+  <div class="contact-top">Let's build something<br><span>meaningful.</span></div>
+  <div class="contact-links">
+    <a class="contact-link" href="mailto:walkingdead1407@proton.me">
+      <span class="link-platform">Email</span>
+      <span>walkingdead1407@proton.me &nbsp;<span class="link-arrow">↗</span></span>
+    </a>
+    <a class="contact-link" href="https://github.com/walkingdead1407" target="_blank" rel="noopener">
+      <span class="link-platform">GitHub</span>
+      <span>github.com/walkingdead1407 &nbsp;<span class="link-arrow">↗</span></span>
+    </a>
+    <a class="contact-link" href="https://www.linkedin.com/in/tooshar-bhardwaj-walkingdead/" target="_blank" rel="noopener">
+      <span class="link-platform">LinkedIn</span>
+      <span>linkedin.com/in/tooshar-bhardwaj-walkingdead &nbsp;<span class="link-arrow">↗</span></span>
+    </a>
+    <a class="contact-link" href="https://mastodon.social/@walkingdead1407" target="_blank" rel="noopener">
+      <span class="link-platform">Mastodon</span>
+      <span>@walkingdead1407 &nbsp;<span class="link-arrow">↗</span></span>
+    </a>
+    <a class= "contact-link" href="https://www.openstreetmap.org/user/WalkingDead1407" target="_blank" rel="noopener">
+                    <span class ="link-platform">OpenStreetMap</span>
+                    <span> https://www.openstreetmap.org/user/WalkingDead1407 &nbsp; <span class="link-arrow">↗</span></span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 WalkingDead aka Tooshar</span>
+  <span>Noida, India</span>
+</footer>
+
+<script>
+  /* ── DOT GRID (UPDATED FOR 3x3 SNAPPING EFFECT) ── */
+  const canvas = document.getElementById('dot-grid');
+  const ctx    = canvas.getContext('2d');
+  const GAP    = 28;
+  let dots = [], mouse = { x: -9999, y: -9999 };
+
+  function build() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    dots = [];
+    for (let y = 0; y < canvas.height + GAP; y += GAP)
+      for (let x = 0; x < canvas.width + GAP; x += GAP)
+        dots.push({ x, y });
+  }
+
+  window.addEventListener('resize', build);
+
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Find the nearest grid coordinate to snap the effect to
+    const closestX = Math.round(mouse.x / GAP) * GAP;
+    const closestY = Math.round(mouse.y / GAP) * GAP;
+
+    for (const d of dots) {
+      let glow = 0;
+      
+      // Calculate distance in terms of grid steps (Manhattan-like distance)
+      const dx = Math.abs(d.x - closestX) / GAP;
+      const dy = Math.abs(d.y - closestY) / GAP;
+
+      // Create the 3x3 cross/square lighting pattern
+      if (dx === 0 && dy === 0) {
+        glow = 1;        // Center dot (brightest)
+      } else if (dx <= 1 && dy <= 1) {
+        if (dx === 1 && dy === 1) {
+          glow = 0.25;   // 4 Corner dots (dimmest in the 3x3)
+        } else {
+          glow = 0.6;    // 4 Cross dots: Top, Bottom, Left, Right (medium)
+        }
+      }
+
+      if (glow > 0) {
+        const size = 1.5 + glow * 2.5; // Scale the glowing dots slightly
+        const g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, size * 4);
+        
+        // Custom neon green gradient mapped to the 'glow' value
+        g.addColorStop(0,   `rgba(200,240,96,${glow})`);
+        g.addColorStop(0.5, `rgba(200,240,96,${glow * 0.4})`);
+        g.addColorStop(1,   `rgba(200,240,96,0)`);
+        
+        // Draw the soft blur/glow behind the dot
+        ctx.beginPath(); ctx.arc(d.x, d.y, size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = g; ctx.fill();
+        
+        // Draw the core dot itself
+        ctx.beginPath(); ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,240,96,${glow})`; ctx.fill();
+      } else {
+        // Draw normal inactive dots
+        ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fill();
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  build();
+  loop();
+
+  /* ── CURSOR & TOUCH LOGIC ── */
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  
+  // Detect if the device has touch capabilities
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+  if (isTouchDevice) {
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+  }
+
+  function updateCoords(x, y) {
+    mx = x; my = y;
+    mouse.x = x; mouse.y = y;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  }
+
+  // Desktop Mouse
+  document.addEventListener('mousemove', e => {
+    if (!isTouchDevice) {
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
+    }
+    updateCoords(e.clientX, e.clientY);
+  });
+
+  // Mobile Touch
+  document.addEventListener('touchstart', e => {
+    updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+    rx = mx; ry = my; // Snap ring to touch point instantly
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    
+    dot.style.opacity = '1';
+    ring.style.opacity = '1';
+    ring.classList.add('pulse-tap');
+    setTimeout(() => ring.classList.remove('pulse-tap'), 300);
+  }, {passive: true});
+
+  document.addEventListener('touchmove', e => {
+    updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: true});
+
+  document.addEventListener('touchend', () => {
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  // Smooth Ring Follow Animation
+  (function tick() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(tick);
+  })();
+
+  // Hover States for Links (Added .event-card)
+  document.querySelectorAll('a, button, .project-item, .profile-avatar, .role-card, .event-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { dot.classList.add('h'); ring.classList.add('h'); });
+    el.addEventListener('mouseleave', () => { dot.classList.remove('h'); ring.classList.remove('h'); });
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'none'; 
+      }
+    });
+  }, { threshold: 0.1 });
+
+  // Added .event-card to scroll reveal
+  document.querySelectorAll('.stat, .project-item, .contact-link, .role-card, .event-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
+
