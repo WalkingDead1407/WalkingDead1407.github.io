@@ -123,7 +123,18 @@
       font-family: var(--sans); font-weight: 800; font-size: 1rem;
       color: var(--accent); letter-spacing: -0.02em; text-decoration: none; cursor: none;
     }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        }
+
+    .nav-links::-webkit-scrollbar {
+        display: none; /* hides ugly scrollbar */
+    }
     .nav-links a {
       color: var(--muted); text-decoration: none; font-size: 0.75rem;
       letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; cursor: none;
@@ -162,7 +173,7 @@
       position: relative;
       z-index: 100;
     }
-    
+ 
     .profile-avatar:hover {
       border-color: var(--accent);
       transform: translateY(-3px);
@@ -319,9 +330,13 @@
       .project-stack { display: none; }
       footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
       body { cursor: auto; }
-      
+ 
       /* Reset interactive styles for native touch feel */
       .project-item, .contact-link, .nav-links a, .event-card { cursor: pointer; }
+      .contact-link span:last-child {
+      word-break: break-all;
+      overflow-wrap: anywhere;
+}
     }
   </style>
 </head>
@@ -522,6 +537,31 @@ We aggregated urban datasets to create a 0–100 Quality of Life score for every
                     <span> https://www.openstreetmap.org/user/WalkingDead1407 &nbsp; <span class="link-arrow">↗</span></span>
     </a>
   </div>
+<!-- VAIBRING BUTTON STYLE -->
+  <div style="display:flex; justify-content:center; margin-top:2rem;">
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:2rem;
+                    padding:0.8rem 1.6rem;
+                    border:1px solid #2a2a2a;
+                    border-radius:14px;
+                    background:rgba(20,20,20,0.6);
+                    backdrop-filter:blur(10px);
+                    font-size:0.75rem;
+                    letter-spacing:0.12em;
+                    text-transform:lowercase;
+                ">
+                <a data-vaibring="prev" href="#"style="color:#888; text-decoration:none; cursor:default;">←</a> 
+                <span style="color:#ccc;">webring</span>
+                <a data-vaibring="next" href="#" style="color:#888; text-decoration:none; cursor:default;">→</a>
+ 
+                </div>
+  </div>
+            <script
+                src="https://v8v88v8v88.github.io/vaibring/webring/minimal.js"
+                data-ring="https://cdn.jsdelivr.net/gh/v8v88v8v88/vaibring@main/webring/sites.json"
+            ></script>
 </section>
 
 <footer>
@@ -575,16 +615,16 @@ We aggregated urban datasets to create a 0–100 Quality of Life score for every
       if (glow > 0) {
         const size = 1.5 + glow * 2.5; // Scale the glowing dots slightly
         const g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, size * 4);
-        
+ 
         // Custom neon green gradient mapped to the 'glow' value
         g.addColorStop(0,   `rgba(200,240,96,${glow})`);
         g.addColorStop(0.5, `rgba(200,240,96,${glow * 0.4})`);
         g.addColorStop(1,   `rgba(200,240,96,0)`);
-        
+
         // Draw the soft blur/glow behind the dot
         ctx.beginPath(); ctx.arc(d.x, d.y, size * 4, 0, Math.PI * 2);
         ctx.fillStyle = g; ctx.fill();
-        
+
         // Draw the core dot itself
         ctx.beginPath(); ctx.arc(d.x, d.y, size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(200,240,96,${glow})`; ctx.fill();
@@ -604,13 +644,13 @@ We aggregated urban datasets to create a 0–100 Quality of Life score for every
   const dot  = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
   let mx = -100, my = -100, rx = -100, ry = -100;
-  
+ 
   // Detect if the device has touch capabilities
   const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   if (isTouchDevice) {
-    dot.style.opacity = '0';
-    ring.style.opacity = '0';
+    dot.remove();
+    ring.remove();
   }
 
   function updateCoords(x, y) {
@@ -630,17 +670,7 @@ We aggregated urban datasets to create a 0–100 Quality of Life score for every
   });
 
   // Mobile Touch
-  document.addEventListener('touchstart', e => {
-    updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-    rx = mx; ry = my; // Snap ring to touch point instantly
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    
-    dot.style.opacity = '1';
-    ring.style.opacity = '1';
-    ring.classList.add('pulse-tap');
-    setTimeout(() => ring.classList.remove('pulse-tap'), 300);
-  }, {passive: true});
+
 
   document.addEventListener('touchmove', e => {
     updateCoords(e.touches[0].clientX, e.touches[0].clientY);
