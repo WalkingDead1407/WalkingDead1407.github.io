@@ -9,7 +9,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root { 
+   :root { 
     /* LIGHT THEME */
 
     --bg: #f8fafc;
@@ -22,9 +22,11 @@
     --grid-dot: rgba(15,23,42,.09);
     --nav-bg: rgba(248,250,252,.82);
     --mono: 'DM Mono', monospace;
-    --sans: 'Syne', sans-serif;}
+    --sans: 'Syne', sans-serif;
     --cursor-ring: rgba(37,99,235,.35);
     --cursor-ring-hover: rgba(37,99,235,.60);
+    --surface-hover: #f1f5f9;
+    }
     html[data-theme="dark"]{
 
     --bg:#0a0a0a;
@@ -442,7 +444,7 @@
   <div class="about-grid">
     <div>
       <div class="about-name" id="about-name">Tooshar<br>aka WalkingDead</div>
-      <p class="about-text"id="about-p1">
+      <p class="about-text" id="about-p1">
         I'm someone who loves turning data into meaningful insights and imagination into intelligent systems. Currently pursuing <strong style="color:var(--text); position:relative; z-index:100;">B.Tech in CSE from GGSIPU</strong> and <strong style="color:var(--text); position:relative; z-index:100;">B.Sc (Hons.) in DSAI from IIT Guwahati</strong>.
       </p>
       <p class="about-text" id="about-p2">
@@ -483,7 +485,8 @@
       <div class="stat"><div class="stat-label">Primary Degree</div><div class="stat-value">B.Tech CSE — GGSIPU</div></div>
       <div class="stat"><div class="stat-label">Secondary Degree</div><div class="stat-value">B.Sc DSAI — IIT Guwahati</div></div>
       <div class="stat"><div class="stat-label">Focus Areas</div><div class="stat-value">ML · AI · Data Science · FOSS</div></div>
-      <div class="stat"><div class="stat-label"id="focus-label">Currently Into</div><div class="stat-value" id="focus-label">Unsupervised Learning &amp; New Languages</div></div>
+      <div class="stat"><div class="stat-label" id="focus-label">Currently Into</div>
+                        <div class="stat-value" id="focus-value">Unsupervised Learning &amp; New Languages</div></div>
     </div>
   </div>
 </section>
