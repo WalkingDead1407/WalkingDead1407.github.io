@@ -12,20 +12,23 @@
    :root { 
     /* LIGHT THEME */
 
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --border: #e2e8f0;
+    --bg: #eeeeec;
+    --surface: #f7f7f5;
+    --border: #dcdcd8;
     --text: #0f172a;
     --muted: #64748b;
     --accent: #2563eb;
     --accent2: #0ea5e9;
     --grid-dot: rgba(15,23,42,.09);
-    --nav-bg: rgba(248,250,252,.82);
+    --nav-bg: rgba(238,238,236,.82);
     --mono: 'DM Mono', monospace;
     --sans: 'Syne', sans-serif;
     --cursor-ring: rgba(37,99,235,.35);
     --cursor-ring-hover: rgba(37,99,235,.60);
-    --surface-hover: #f1f5f9;
+    --surface-hover: #eaeae7;
+    }
+    html:not([data-theme="dark"]) #dot-grid {
+        display: none;
     }
     html[data-theme="dark"]{
 
@@ -75,6 +78,9 @@
       pointer-events: none;
       z-index: -2;
       opacity: 0.5;
+      html:not([data-theme="dark"]) body::after {
+            opacity: 0.7;
+        }
     }
 
     #nav-bg {
