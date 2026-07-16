@@ -12,20 +12,20 @@
    :root { 
     /* LIGHT THEME */
 
-    --bg: #eeeeec;
-    --surface: #f7f7f5;
-    --border: #dcdcd8;
-    --text: #0f172a;
+   --bg: #dcdad5;
+--surface: #e9e7e3;
+--border: #c8c5bf;
+--nav-bg: rgba(220,218,213,.82);
+--surface-hover: #d2cfc9; 
+        --text: #0f172a;
     --muted: #475569;
     --accent: #2563eb;
     --accent2: #0ea5e9;
     --grid-dot: rgba(15,23,42,.09);
-    --nav-bg: rgba(238,238,236,.82);
     --mono: 'DM Mono', monospace;
     --sans: 'Syne', sans-serif;
     --cursor-ring: rgba(37,99,235,.35);
-    --cursor-ring-hover: rgba(37,99,235,.60);
-    --surface-hover: #eaeae7;
+    --cursor-ring-hover: rgba(37,99,235,.60)
     }
     html:not([data-theme="dark"]) #dot-grid {
         display: none;
@@ -59,7 +59,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       cursor: none;
-      postion: relative;
+      position: relative;
       z-index: 0;
     }
 
@@ -75,8 +75,9 @@
         content: '';
         position: fixed;
         inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
-        background-size: 150px;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.27' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+
+        background-size: 300px;
         pointer-events: none;
         z-index: -2;
         opacity: 0.5;
@@ -427,8 +428,8 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <button id="theme-toggle">
-        ☀ Professional
-  </button>
+        ☀ 
+            </button>
 </nav>
 
 <div class="hero">
@@ -859,7 +860,7 @@ function updateThemeButton(){
 
     toggle.textContent =
         theme === "light"
-            ? "☀ Professional"
+            ? "☀ "
             : "🌙 Alias";
 
 }
