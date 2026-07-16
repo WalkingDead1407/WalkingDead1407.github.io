@@ -11,13 +11,12 @@
 
    :root { 
     /* LIGHT THEME */
-
-   --bg: #dcdad5;
---surface: #e9e7e3;
---border: #c8c5bf;
---nav-bg: rgba(220,218,213,.82);
---surface-hover: #d2cfc9; 
-        --text: #0f172a;
+    --bg: #dcdad5;
+    --surface: #e9e7e3;
+    --border: #c8c5bf;
+    --nav-bg: rgba(220,218,213,.82);
+    --surface-hover: #d2cfc9; 
+    --text: #0f172a;
     --muted: #475569;
     --accent: #2563eb;
     --accent2: #0ea5e9;
@@ -29,6 +28,8 @@
     }
     html:not([data-theme="dark"]) #dot-grid {
         display: none;
+        opacity: 1;
+        mix-blend-mode: multiply;
     }
     html[data-theme="dark"]{
 
@@ -75,12 +76,12 @@
         content: '';
         position: fixed;
         inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.27' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.27' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
 
-        background-size: 300px;
+        background-size: 400px;
         pointer-events: none;
         z-index: -2;
-        opacity: 0.5;
+        opacity: 0;
     }
     html:not([data-theme="dark"]) body::after {
         opacity: 1;
