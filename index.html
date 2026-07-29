@@ -339,6 +339,7 @@
       cursor: none;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
       transition: background 0.2s, border-color 0.2s;
     }
     .event-card:hover { border-color: var(--accent); background: var(--surface-hover); }
@@ -363,6 +364,19 @@
       margin-bottom: 1.5rem;
       flex-grow: 1; /* Pushes the arrow to the bottom */
     }
+    .event-image {
+        overflow: hidden;
+        max-height: 14px;
+        margin: -1.8rem -2rem 1.2rem -2rem;
+        transition: max-height 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .event-image img {
+        display: block;
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+    }
+.event-card:hover .event-image { max-height: 170px; }
     .event-card:hover .project-arrow { transform: translate(3px,-3px); color: var(--accent); }
 
     /* ── CONTACT ── */
@@ -604,8 +618,9 @@
   <div class="events-grid">
  
     <a class="event-card" href="https://www.linkedin.com/posts/tooshar-bhardwaj-walkingdead_foss-opensource-opencommunitycall-activity-7435761174731771904-zxD1?utm_source=share&utm_medium=member_desktop&rcm=ACoAAF5aIVwBYM9FGe4HCMHT96PNyatUa0jsgrM" target="_blank" rel="noopener">
-      <div class="event-date">18th January 2026</div>
-      <div class="event-title">Open Community Call</div>
+      <div class="event-image"><img src="images/events/occ-2.jpeg" alt=""></div>
+      <div class="event-date">18th January 2026</div> 
+      <div class="event-title">Open Community Call</div> 
       <div class="event-desc">Hosted an Open Community Call on Machine Learning, simplifying core concepts and creating an engaging space for beginners.
 
 Led a session under The FOSS Club covering ML basics, supervised learning, and linear regression, along with discussions on Linux, AI, and game development.</div>
@@ -613,6 +628,7 @@ Led a session under The FOSS Club covering ML basics, supervised learning, and l
     </a>
 
     <a class="event-card" href="https://www.linkedin.com/posts/tooshar-bhardwaj-walkingdead_fosshack2026-fossunited-opensource-activity-7444441535829606400-pRuK?utm_source=share&utm_medium=member_desktop&rcm=ACoAAF5aIVwBYM9FGe4HCMHT96PNyatUa0jsgrM" target="_blank" rel="noopener">
+      <div class="event-image"><img src="images/events/hack26-2.jpeg" alt=""></div>
       <div class="event-date">28-29th March 2026</div>
       <div class="event-title">FOSS Hack 2026</div>
       <div class="event-desc">Built LivaBl-—an open-source platform to simplify locality decisions using data-driven insights.
