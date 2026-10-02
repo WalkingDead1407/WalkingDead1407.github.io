@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light';</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WalkingDead | Tooshar</title>
@@ -86,98 +87,7 @@
       vertical-align: text-bottom;
     }
     @keyframes blink { 50% { opacity: 0; } }
-    body.theme-switching { overflow: hidden; }
-    #theme-terminal.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    #theme-terminal-cursor {
-      display: inline-block;
-      width: 7px; height: 1em;
-      background: var(--accent);
-      margin-left: 2px;
-      animation: blink 0.8s steps(1) infinite;
-      vertical-align: text-bottom;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-    @media (max-width: 768px) {
-      #theme-terminal { right: 1.2rem; left: 1.2rem; max-width: none; top: 70px; }
-    }
-        /* ── THEME GLITCH SNAP ── */
-    #theme-glitch {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      pointer-events: none;
-      opacity: 0;
-      mix-blend-mode: difference;
-      background: var(--accent);
-    }
-    body.glitching #theme-glitch {
-      animation: glitchFlicker 0.4s steps(2, end);
-    }
-    body.glitching {
-      animation: glitchJitter 0.4s steps(2, end);
-    }
-    @keyframes glitchFlicker {
-      0%   { opacity: 0; }
-      10%  { opacity: 0.85; }
-      20%  { opacity: 0; }
-      35%  { opacity: 0.6; }
-      45%  { opacity: 0; }
-      55%  { opacity: 0.9; }
-      65%  { opacity: 0; }
-      80%  { opacity: 0.4; }
-      100% { opacity: 0; }
-    }
-    @keyframes glitchJitter {
-      0%   { transform: translate(0,0); }
-      10%  { transform: translate(-4px, 2px); }
-      20%  { transform: translate(3px, -2px); }
-      35%  { transform: translate(-3px, 0); }
-      45%  { transform: translate(2px, 1px); }
-      55%  { transform: translate(-2px, -1px); }
-      70%  { transform: translate(3px, 0); }
-      100% { transform: translate(0,0); }
-    }
-    /* ── THEME GLITCH SNAP ── */
-    #theme-glitch {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      pointer-events: none;
-      opacity: 0;
-      mix-blend-mode: difference;
-      background: var(--accent);
-    }
-    body.glitching #theme-glitch {
-      animation: glitchFlicker 0.4s steps(2, end);
-    }
-    body.glitching {
-      animation: glitchJitter 0.4s steps(2, end);
-    }
-    @keyframes glitchFlicker {
-      0%   { opacity: 0; }
-      10%  { opacity: 0.85; }
-      20%  { opacity: 0; }
-      35%  { opacity: 0.6; }
-      45%  { opacity: 0; }
-      55%  { opacity: 0.9; }
-      65%  { opacity: 0; }
-      80%  { opacity: 0.4; }
-      100% { opacity: 0; }
-    }
-    @keyframes glitchJitter {
-      0%   { transform: translate(0,0); }
-      10%  { transform: translate(-4px, 2px); }
-      20%  { transform: translate(3px, -2px); }
-      35%  { transform: translate(-3px, 0); }
-      45%  { transform: translate(2px, 1px); }
-      55%  { transform: translate(-2px, -1px); }
-      70%  { transform: translate(3px, 0); }
-      100% { transform: translate(0,0); }
-    }
-
+    body.theme-switching { overflow: hidden; } 
         /* ── BOOT SCREEN ── */
     #boot-screen {
       position: fixed;
@@ -205,7 +115,6 @@
       animation: blink 0.8s steps(1) infinite;
       vertical-align: text-bottom;
     }
-    @keyframes blink { 50% { opacity: 0; } }
     body.booting { overflow: hidden; }
     body {
       background: var(--bg);
@@ -247,6 +156,7 @@
       top: 0; left: 0; right: 0;
       height: 75px;
       background: var(--nav-bg);
+      -webkit-backdrop-filter: blur(14px);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
       z-index: 10;
@@ -498,7 +408,7 @@
       overflow: visible;
       transition: background 0.2s, border-color 0.2s;
     }
-    .event-card:hover { border-color: var(--accent); background: var(--surface-hover); z-inedx:10; }
+    .event-card:hover { border-color: var(--accent); background: var(--surface-hover); z-index:10; }
     .event-date {
       font-size: 0.6rem;
       color: var(--accent);
@@ -519,9 +429,10 @@
       line-height: 1.6;
       margin-bottom: 1.5rem;
       flex-grow: 1; /* Pushes the arrow to the bottom */
+      white-space: pre-line;
     }
     .event-image {
-        --img-width: 220px;
+        --img-width: clamp(0px, calc((100vw - 1100px) / 2 + 40px), 220px);
         position: absolute;
         top: 0;
         height:100%;
@@ -548,6 +459,21 @@
     }
     .events-grid > .event-card:nth-child(odd) .event-image { right: 100%; }
     .events-grid > .event-card:nth-child(even) .event-image { left: 100%; }
+    /* ── WEBRING ── */
+    .webring { display: flex; justify-content: center; margin-top: 2rem; }
+    .webring-inner {
+      display: flex; align-items: center; gap: 2rem;
+      padding: .8rem 1.6rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      font-size: .75rem; letter-spacing: .12em; text-transform: lowercase;
+      position: relative; z-index: 100;
+    }
+    .webring-inner a { color: var(--muted); text-decoration: none; transition: color .2s; cursor: none; }
+    .webring-inner a:hover { color: var(--accent); }
+    .webring-inner a[data-interweb="random"] { color: var(--text); }
+    @media (max-width: 768px) { .webring-inner a { cursor: pointer; } }
     /* ── CONTACT ── */
     .contact-top { font-family: var(--sans); font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 3rem; }
     .contact-top span { color: var(--accent); }
@@ -571,30 +497,44 @@
     .fade-in:nth-child(1) { animation-delay: 0.1s; }
     .fade-in:nth-child(2) { animation-delay: 0.25s; }
     .fade-in:nth-child(3) { animation-delay: 0.4s; }
-
+    @media (max-width: 1100px) { .event-image { display: none; } }
     @media (max-width: 768px) {
-      nav { padding: 1.2rem 1.5rem; }
-      #nav-bg { height: 60px; }
-      .hero { padding: 80px 1.5rem 3rem; }
-      .hero-corner { display: none; }
+      html, body { max-width: 100%; overflow-x: hidden; }
+      section[id] { scroll-margin-top: 70px; }
+
+      /* nav: logo + links + toggle must fit in one row */
+      nav { padding: 0.8rem 1rem; gap: 0.75rem; }
+      #nav-bg { height: 58px; }
+      .nav-logo { font-size: 0.9rem; flex-shrink: 0; }
+      .nav-links { justify-content: flex-start; gap: 1rem; min-width: 0; }
+      .nav-links a { font-size: 0.68rem; letter-spacing: 0.06em; }
+      #theme-toggle { padding: 0.35rem 0.7rem; flex-shrink: 0; cursor: pointer; }
+      #theme-toggle .toggle-label { display: none; }
+
+      /* hero */
+      .hero { min-height: 100vh; min-height: 100svh; padding: 80px 1.5rem 3rem; }
+      .hero h1 { font-size: min(4.5rem, calc((100vw - 3rem) / 8.2)); }
+      .hero-corner, .scroll-hint { display: none; }
+
       section { padding: 4rem 1.5rem; }
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .roles-container { flex-direction: column; gap: 1rem; margin-top: 2rem; }
       .events-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .project-item { grid-template-columns: 1fr auto; }
+      .event-image { display: none; }
+      .project-item { grid-template-columns: 1fr auto; padding: 1.4rem 1.2rem; gap: 1rem; }
       .project-stack { display: none; }
-      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
-      body { cursor: auto; }
-      .event-image { display: none; }}
-      #theme-toggle {cursor: pointer; flex-shrink: 0;}
 
-      /* Reset interactive styles for native touch feel */
+      /* contact: stack label above the (long) handle/URL */
+      .contact-link { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+      .contact-link span:last-child { font-size: 0.72rem; word-break: break-all; overflow-wrap: anywhere; }
+
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+
+      /* native touch feel */
+      body { cursor: auto; }
       .project-item, .contact-link, .nav-links a, .event-card { cursor: pointer; }
-      .contact-link span:last-child {
-      word-break: break-all;
-      overflow-wrap: anywhere;
-}
     }
+    @media (hover: none), (pointer: coarse) { * { cursor: auto !important; } }
   </style>
 </head>
 <body>
@@ -630,7 +570,7 @@
   <p class="hero-tag fade-in" id="hero-tag">Based in Noida, India &nbsp;/&nbsp; <span>Open to collabs</span></p>
   <h1 class="fade-in" id="hero-title">
                 Walking<br><em>Dead</em></h1>
-  <p class="hero-copy fade-in" id="hero-subtitle"></p>
+  <p class="hero-sub fade-in" id="hero-subtitle"></p>
   <p class="hero-meta fade-in" id="hero-meta"></p>
   <div class="scroll-hint">Scroll</div>
 </div>
@@ -748,7 +688,7 @@
 
     <a class="project-item" href="https://github.com/WalkingDead1407/SciCalC" target="_blank" rel="noopener">
       <div>
-        <div class="project-num">007</div>
+        <div class="project-num">006</div>
         <div class="project-name">Scientific Calculator</div>
         <div class="project-desc">Calculator made for pbl</div>
       </div>
@@ -814,31 +754,17 @@ Winner of FOSS Hack 2026
                     <span> https://www.openstreetmap.org/user/WalkingDead1407 &nbsp; <span class="link-arrow">↗</span></span>
     </a>
   </div>
-<!-- VAIBRING BUTTON STYLE -->
-  <div style="display:flex; justify-content:center; margin-top:2rem;">
-                <div style="
-                    display:flex;
-                    align-items:center;
-                    gap:2rem;
-                    padding:0.8rem 1.6rem;
-                    border:1px solid #2a2a2a;
-                    border-radius:14px;
-                    background:rgba(20,20,20,0.6);
-                    backdrop-filter:blur(10px);
-                    font-size:0.75rem;
-                    letter-spacing:0.12em;
-                    text-transform:lowercase;
-                ">
-                <a data-vaibring="prev" href="#"style="color:#888; text-decoration:none; cursor:default;">←</a> 
-                <span style="color:#ccc;">webring</span>
-                <a data-vaibring="next" href="#" style="color:#888; text-decoration:none; cursor:default;">→</a>
- 
-                </div>
-  </div>
-            <script
-                src="https://v8v88v8v88.github.io/vaibring/webring/minimal.js"
-                data-ring="https://cdn.jsdelivr.net/gh/v8v88v8v88/vaibring@main/webring/sites.json"
-            ></script>
+    <!-- INTERWEB WEBRING -->
+   <div class="webring"><div class="webring-inner">
+     <a data-interweb="prev" href="#">←</a>
+     <a data-interweb="random" href="#">interweb</a>
+     <a data-interweb="next" href="#">→</a>
+   </div></div>
+   <script
+     src="https://v8v88v8v88.github.io/interweb/webring/minimal.js"
+     data-ring="https://cdn.jsdelivr.net/gh/v8v88v8v88/interweb@main/webring/sites.json"
+     async
+   ></script>
 </section>
 
 <footer>
@@ -930,6 +856,7 @@ Winner of FOSS Hack 2026
 
   }
   function loop() {
+    if (document.documentElement.dataset.theme !== 'dark') { requestAnimationFrame(loop); return; }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const accent = hexToRgb(getCSS("--accent"));
     const gridDot = getCSS("--grid-dot");
@@ -987,7 +914,7 @@ Winner of FOSS Hack 2026
   let mx = -100, my = -100, rx = -100, ry = -100;
  
   // Detect if the device has touch capabilities
-  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
   if (isTouchDevice) {
     dot.remove();
@@ -1053,7 +980,7 @@ Winner of FOSS Hack 2026
   document.querySelectorAll('.stat, .project-item, .contact-link, .role-card, .event-card').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(16px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.2s, background 0.2s';
     io.observe(el);
   });
 const toggle = document.getElementById("theme-toggle");
@@ -1070,7 +997,7 @@ function updateThemeButton(){
     toggle.textContent =
         theme === "light"
             ? "☀ "
-            : "🌙 Alias";
+            : '🌙  <span class="toggle-label">Alias</span>';
 
 }
 function runThemeTerminal(nextTheme, applyCb) {
